@@ -1,0 +1,24 @@
+{
+  "type": "module",
+  "name": "gen",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsoldi/gen"
+  },
+  "scripts": {
+    "test": "tsc && node ./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.5"
+  }
+}
