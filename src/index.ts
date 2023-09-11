@@ -1,19 +1,11 @@
 type GenLike<T> = Gen<T> | T[] | AsyncGenerator<T, void, undefined> | (() => AsyncGenerator<T, void, undefined>)
 type PromiseLike<T> = Promise<T> | T
 
-export class Gen<T> implements AsyncIterator<T> {
+export class Gen<T> implements AsyncIterable<T> {
     constructor(private readonly gen: AsyncGenerator<T, void, undefined>) { }
 
-    next(...args: [] | [undefined]): Promise<IteratorResult<T, void>> {
-        return this.gen.next(...args);
-    }
-
-    return(value: void | PromiseLike<void>): Promise<IteratorResult<T, void>> {
-        return this.gen.return(value);
-    }
-
-    throw(e: any): Promise<IteratorResult<T, void>> {
-        return this.gen.throw(e);
+    [Symbol.asyncIterator]() {
+        return this.gen;
     }
 
     pipe<R>(map: (gen: AsyncGenerator<T, void, undefined>) => AsyncGenerator<R, void, undefined>) {
