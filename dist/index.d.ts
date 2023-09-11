@@ -6,6 +6,7 @@ export declare class Gen<T> implements AsyncIterable<T> {
     [Symbol.asyncIterator](): AsyncGenerator<T, void, undefined>;
     pipe<R>(map: (gen: AsyncGenerator<T, void, undefined>) => AsyncGenerator<R, void, undefined>): Gen<R>;
     take(count: number): Gen<Awaited<T>>;
+    do(action: (item: T) => unknown): Gen<Awaited<T>>;
     toArray(): Promise<T[]>;
     map<R>(map: (item: T) => PromiseLike<R>): Gen<Awaited<R>>;
     flatMap<R>(map: (item: T) => PromiseLike<GenLike<R>>): Gen<R>;

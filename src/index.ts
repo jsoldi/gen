@@ -25,6 +25,15 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
+    do(action: (item: T) => unknown) {
+        return this.pipe(async function*(gen) {
+            for await (let item of gen) {
+                action(item);
+                yield item;
+            }
+        });
+    }
+
     async toArray() {
         const result: T[] = [];
 

@@ -18,6 +18,14 @@ export class Gen {
             }
         });
     }
+    do(action) {
+        return this.pipe(async function* (gen) {
+            for await (let item of gen) {
+                action(item);
+                yield item;
+            }
+        });
+    }
     async toArray() {
         const result = [];
         for await (let item of this.gen)
