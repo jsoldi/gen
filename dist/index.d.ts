@@ -9,9 +9,9 @@ export declare class Gen<T> implements AsyncIterable<T> {
     toArray(): Promise<T[]>;
     map<R>(map: (item: T) => PromiseLike<R>): Gen<Awaited<R>>;
     flatMap<R>(map: (item: T) => PromiseLike<GenLike<R>>): Gen<R>;
-    filter(pred: (item: T) => PromiseLike<boolean>): Gen<Awaited<T>>;
-    takeWhile(pred: (item: T) => PromiseLike<boolean>): Gen<Awaited<T>>;
-    skipWhile(pred: (item: T) => PromiseLike<boolean>): Gen<Awaited<T>>;
+    filter(pred: (item: T) => PromiseLike<unknown>): Gen<Awaited<T>>;
+    takeWhile(pred: (item: T) => PromiseLike<unknown>): Gen<Awaited<T>>;
+    skipWhile(pred: (item: T) => PromiseLike<unknown>): Gen<Awaited<T>>;
     distinctBy<K>(key: (item: T) => PromiseLike<K>): Gen<Awaited<T>>;
     static from<T>(genLike: GenLike<T>): Gen<T>;
     static recur<T>(func: (prev?: T) => PromiseLike<T | undefined>): Gen<Awaited<T>>;

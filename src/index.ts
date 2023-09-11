@@ -50,7 +50,7 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
-    filter(pred: (item: T) => PromiseLike<boolean>) {
+    filter(pred: (item: T) => PromiseLike<unknown>) {
         return this.pipe(async function*(gen) {
             for await (let item of gen)
                 if (await pred(item))
@@ -58,7 +58,7 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
-    takeWhile(pred: (item: T) => PromiseLike<boolean>) {
+    takeWhile(pred: (item: T) => PromiseLike<unknown>) {
         return this.pipe(async function*(gen) {
             for await (let item of gen) {
                 if (!await pred(item))
@@ -69,7 +69,7 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
-    skipWhile(pred: (item: T) => PromiseLike<boolean>) {
+    skipWhile(pred: (item: T) => PromiseLike<unknown>) {
         return this.pipe(async function*(gen) {
             let skipping = true;
 
