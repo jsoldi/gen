@@ -2,6 +2,15 @@ export class Gen {
     constructor(gen) {
         this.gen = gen;
     }
+    next(...args) {
+        return this.gen.next(...args);
+    }
+    return(value) {
+        return this.gen.return(value);
+    }
+    throw(e) {
+        return this.gen.throw(e);
+    }
     pipe(map) {
         return new Gen(map(this.gen));
     }
