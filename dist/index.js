@@ -85,6 +85,12 @@ export class Gen {
             }
         });
     }
+    async reduce(reducer, initial) {
+        let acc = initial;
+        for await (let item of this.gen)
+            acc = await reducer(acc, item);
+        return acc;
+    }
     static from(genLike) {
         if (genLike instanceof Gen)
             return genLike;

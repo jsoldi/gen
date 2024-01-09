@@ -1,20 +1,25 @@
 {
   "type": "module",
-  "name": "gen",
-  "version": "0.0.5",
-  "description": "",
+  "name": "@jsoldi/gen",
+  "version": "0.0.6",
+  "description": "Async-iterator monadic linq-like wrapper.",
   "main": "./dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/jsoldi/gen"
   },
+  "keywords": [
+    "async-iterator",
+    "iterator",
+    "linq"
+  ],  
   "scripts": {
     "test": "tsc && node ./dist/index.js"
   },
   "files": [
     "dist"
   ],
-  "author": "",
+  "author": "Juan Soldi",
   "license": "ISC",
   "dependencies": {
   },

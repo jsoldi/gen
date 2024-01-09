@@ -1,5 +1,5 @@
 type GenLike<T> = Gen<T> | T[] | AsyncGenerator<T, void, undefined> | (() => AsyncGenerator<T, void, undefined>)
-type PromiseLike<T> = Promise<T> | T
+type Awaitable<T> = Promise<T> | T
 
 export class Gen<T> implements AsyncIterable<T> {
     constructor(private readonly gen: AsyncGenerator<T, void, undefined>) { }
@@ -43,14 +43,14 @@ export class Gen<T> implements AsyncIterable<T> {
         return result;
     }
 
-    map<R>(map: (item: T) => PromiseLike<R>) {
+    map<R>(map: (item: T) => Awaitable<R>) {
         return this.pipe(async function*(gen) {
             for await (let item of gen)
                 yield await map(item);
         });
     }
 
-    flatMap<R>(map: (item: T) => PromiseLike<GenLike<R>>): Gen<R> {
+    flatMap<R>(map: (item: T) => Awaitable<GenLike<R>>): Gen<R> {
         return this.pipe(async function*(gen) {
             for await (let item of gen) {
                 const child = await map(item);
@@ -59,7 +59,7 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
-    filter(pred: (item: T) => PromiseLike<unknown>) {
+    filter(pred: (item: T) => Awaitable<unknown>) {
         return this.pipe(async function*(gen) {
             for await (let item of gen)
                 if (await pred(item))
@@ -67,7 +67,7 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
-    takeWhile(pred: (item: T) => PromiseLike<unknown>) {
+    takeWhile(pred: (item: T) => Awaitable<unknown>) {
         return this.pipe(async function*(gen) {
             for await (let item of gen) {
                 if (!await pred(item))
@@ -78,7 +78,7 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
-    skipWhile(pred: (item: T) => PromiseLike<unknown>) {
+    skipWhile(pred: (item: T) => Awaitable<unknown>) {
         return this.pipe(async function*(gen) {
             let skipping = true;
 
@@ -92,8 +92,8 @@ export class Gen<T> implements AsyncIterable<T> {
         });
     }
 
-    distinctBy<K>(key: (item: T) => PromiseLike<K>) {
-        const seen = new Set<K>();
+    distinctBy(key: (item: T) => Awaitable<string>) {
+        const seen = new Set<string>();
 
         return this.pipe(async function*(gen) {
             for await (let item of gen) {
@@ -105,6 +105,17 @@ export class Gen<T> implements AsyncIterable<T> {
                 }
             }
         });
+    }
+
+    async reduce<R>(reducer: (acc: R, item: T) => Awaitable<R>, initial: R): Promise<R>;
+    async reduce<R>(reducer: (acc: R | undefined, item: T) => Awaitable<R | undefined>): Promise<R | undefined>;
+    async reduce<R>(reducer: (acc: R | undefined, item: T) => Awaitable<R | undefined>, initial?: R): Promise<R | undefined> {
+        let acc: R | undefined = initial;
+    
+        for await (let item of this.gen)
+            acc = await reducer(acc, item);
+    
+        return acc;
     }
 
     static from<T>(genLike: GenLike<T>) {
@@ -122,7 +133,7 @@ export class Gen<T> implements AsyncIterable<T> {
             return new Gen(genLike);
     }
 
-    static recur<T>(func: (prev?: T) => PromiseLike<T | undefined>) {
+    static recur<T>(func: (prev?: T) => Awaitable<T | undefined>) {
         return new Gen((async function*() {
             let prev: T | undefined = undefined;
 
